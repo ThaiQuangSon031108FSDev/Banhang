@@ -1,0 +1,49 @@
+﻿@model Banhang.Models.Product
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Thêm sản phẩm";
+    var categories = ViewBag.Categories as List<Banhang.Models.Category>;
+}
+<h4>Thêm sản phẩm</h4>
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Tên</label>
+            <input class="form-control" asp-for="ProductName" required />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Giá</label>
+            <input class="form-control" asp-for="Price" type="number" step="0.01" required />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Tồn kho</label>
+            <input class="form-control" asp-for="Stock" type="number" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Danh mục</label>
+            <select class="form-select" asp-for="CategoryID">
+                @foreach (var c in categories)
+                {
+                    <option value="@c.CategoryID">@c.CategoryName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Ảnh (URL)</label>
+            <input class="form-control" asp-for="ImageUrl" />
+        </div>
+        <div class="col-md-4 mb-3"><label class="form-label">Màu</label><input class="form-control" asp-for="Color" /></div>
+        <div class="col-md-4 mb-3"><label class="form-label">Size</label><input class="form-control" asp-for="Size" /></div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Kích hoạt</label>
+            <input class="form-check-input" type="checkbox" asp-for="IsActive" />
+        </div>
+        <div class="col-12 mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea class="form-control" asp-for="Description" rows="4"></textarea>
+        </div>
+    </div>
+    <button class="btn btn-success">Lưu</button>
+    <a class="btn btn-secondary" asp-action="Index">Hủy</a>
+</form>
