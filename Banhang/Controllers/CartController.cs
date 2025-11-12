@@ -1,16 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Banhang.Data;
-using Banhang.Models;
 using Banhang.Extensions;
+using Banhang.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Banhang.Controllers
 {
     public class CartController : Controller
     {
         private readonly ProductDAO _productDao;
-        const string CART_KEY = "CART_SESSION";
+        private const string CART_KEY = "CART_SESSION";
 
-        public CartController(ProductDAO productDao) { _productDao = productDao; }
+        public CartController(ProductDAO productDao)
+        {
+            _productDao = productDao;
+        }
 
         private List<CartItem> GetCart()
             => HttpContext.Session.GetObject<List<CartItem>>(CART_KEY) ?? new List<CartItem>();
@@ -27,9 +33,20 @@ namespace Banhang.Controllers
             var cart = GetCart();
             var item = cart.FirstOrDefault(x => x.ProductID == productId);
             if (item == null)
-                cart.Add(new CartItem { ProductID = p.ProductID, ProductName = p.ProductName, Price = p.Price, ImageUrl = p.ImageUrl, Quantity = quantity });
+            {
+                cart.Add(new CartItem
+                {
+                    ProductID = p.ProductID,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Quantity = quantity
+                });
+            }
             else
+            {
                 item.Quantity += quantity;
+            }
 
             SaveCart(cart);
             return RedirectToAction("Index");
@@ -58,7 +75,10 @@ namespace Banhang.Controllers
             var cart = GetCart();
             var item = cart.FirstOrDefault(x => x.ProductID == productId);
             if (item != null)
+            {
                 item.Quantity = Math.Max(1, quantity);
+            }
+
             SaveCart(cart);
             return RedirectToAction("Index");
         }
