@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using Banhang.Data;
 using Banhang.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Banhang.Controllers
 {
@@ -32,7 +34,6 @@ namespace Banhang.Controllers
             HttpContext.Session.SetInt32("RoleID", user.RoleID);
             HttpContext.Session.SetString("RoleName", user.RoleName ?? "");
 
-            // Remember me (cookie nhẹ)
             if (remember)
                 Response.Cookies.Append("remember_username", user.Username, new CookieOptions { Expires = DateTimeOffset.Now.AddDays(7) });
             else if (Request.Cookies.ContainsKey("remember_username"))
@@ -51,7 +52,6 @@ namespace Banhang.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(User input, string password)
         {
-            // mặc định đăng ký là Customer
             input.RoleID = 3;
             var newId = _userDao.RegisterUser(input, password);
             if (newId <= 0)
@@ -66,6 +66,13 @@ namespace Banhang.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public IActionResult KeepAlive()
+        {
+            HttpContext.Session.SetString("KeepAlive", DateTime.Now.ToString());
+            return Ok();
         }
     }
 }
